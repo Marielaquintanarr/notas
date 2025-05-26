@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/search-icon.webp";
-import flecha from "../assets/flecha.webp";
-import flecha2 from "../assets/flechaderecha.png";
+import arrow from "../assets/blackarrow.png";
 
 interface Clienta {
     id: number;
@@ -55,7 +54,7 @@ function ClientasList() {
                 display: "flex",
                 flexDirection: "column"
             }}>
-                <h2 style={{color: "white", fontSize: "40px", padding: "none", margin: "none"}}>Clientas</h2>
+                <h2 style={{color: "white", fontSize: "3rem", padding: "none", margin: "none"}}>Home</h2>
                 <div style={{
                     backgroundColor: "#2E2E2E",
                     height: "2px",
@@ -65,22 +64,39 @@ function ClientasList() {
                 display: "flex",
                 marginRight: "5%",
                 justifyContent: "flex-end",
-                marginTop: "2%"
+                marginTop: "2%",
+                gap: "15px"
             }}>
-                <Link to="/clientaform">
+                <Link style={{textDecoration: "none"}} to="/clientaform">
                     <button style={{
                         padding: "10%",
                         width: "180px",
-                        backgroundColor: "#1C32FF",
+                        backgroundColor: "#D6ED6A",
                         borderRadius: "20px",
                         border: "none",
+                        color: "black",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "10px"
+                    }}>Crear clienta</button>
+                </Link> 
+                <Link style={{textDecoration: "none"}} to="/crearproducto">
+                    <button style={{
+                        padding: "10%",
+                        width: "180px",
+                        backgroundColor: "#161616",
+                        borderRadius: "20px",
+                        border: "2px solid white",
                         color: "white",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         gap: "10px"
-                    }}>Crear clienta <img src={flecha2} alt="flecha"></img></button>
-                </Link> 
+                    }}>
+                        Crear Producto
+                    </button>
+                </Link>
             </div>
             <div style={{
                 display: "flex",
@@ -90,14 +106,6 @@ function ClientasList() {
                 paddingTop: "2%",
                 gap: "1%"
             }}>
-                <button style={{
-                    borderRadius: "10px",
-                    backgroundColor: "#D6ED6A",
-                    border: "none",
-                    width: "5%"
-                }}><img style={{
-                    width: "50%"
-                }} src={logo} alt="logo"></img> </button>
                 <input 
                     name="search"
                     type="text"
@@ -109,49 +117,57 @@ function ClientasList() {
                         borderColor: "white",
                         borderRadius: "10px",
                         height: "35px",
+                        fontSize: "2rem",
                         width: "100vw",
                         color: "white",
                         textAlign: "left",
                         padding: "1%"
                     }}
                 ></input>
+                <button style={{
+                    borderRadius: "10px",
+                    backgroundColor: "#D6ED6A",
+                    border: "none",
+                    width: "5%"
+                }}><img style={{
+                    width: "50%"
+                }} src={logo} alt="logo"></img> </button>
             </div>
-            <div style={{display: "flex", flexDirection: "column", gap: "30px", paddingLeft: "10%", paddingRight: "10%"}}>
-                {clientasFiltradas.map((clienta) => (
-                    <div style={{
-                        backgroundColor: "#222222",
-                        borderColor: "#2E2E2E",
-                        borderRadius: "20px",
-                        color: "white",
-                        display: "flex",
-                        justifyContent: "space-between",
-
-                    }} key={clienta.id}>
-                        <div style={{ display: "flex",  alignItems: "center" }}>
-                            <div
-                                style={{
-                                    padding: "10%"
-                                }}
-                            ><p>{clienta.nombre} {clienta.apellido}</p>
-                            </div>
-                            <div
-                                style={{
-                                }}
-                            >
-                            <Link to={`/menuclienta/${clienta.id}`}>
-                                <button style={{
-                                    padding: "1%",
-                                    borderRadius: "10px",
-                                    backgroundColor: "#D6ED6A",
-                                }}><img style={{
-                                    width: "50px"
-                                }} src={flecha} alt="flecha"></img></button>
-                            </Link>
-                            </div>
-                        </div>
+            {clientasFiltradas.map((clienta) => (
+                <Link style={{textDecoration: "none"}} to={`/menuclienta/${clienta.id}`}>
+                    <div key={clienta.id} style={{
+                    display: "flex",
+                    paddingLeft: "10%", 
+                    paddingRight: "10%",
+                    gap: "1%",
+                    marginBottom: "1%"
+                }}>
+                    <div
+                        style={{
+                            backgroundColor: "#222222",
+                            border: "2px solid #2E2E2E",
+                            borderRadius: "10px",
+                            height: "35px",
+                            width: "100vw",
+                            color: "white",
+                            textAlign: "left",
+                            padding: "1%",
+                            fontSize: "2rem",
+                            listStyle: "none",
+                            textDecoration: "none"
+                        }}
+                    >{clienta.nombre} {clienta.apellido}</div>
+                    <button style={{
+                        borderRadius: "10px",
+                        backgroundColor: "#D6ED6A",
+                        border: "none",
+                        width: "5%"
+                    }}><img style={{
+                        width: "50%"
+                    }} src={arrow} alt="arrow"></img> </button>
                     </div>
-                ))}
-            </div>
+                </Link>
+            ))}
         </div>
     );
 }

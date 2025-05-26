@@ -13,6 +13,7 @@ import AnotarAbono from './components/AnotarAbono'
 import PedidoAdmin from './components/PedidoAdmin'
 import DevolucionAdmin from './components/DevolucionAdmin'
 import { Routes, Route, BrowserRouter } from "react-router-dom";
+import CrearProducto from './components/CrearProducto'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="devolucionadmin/:id" element={<DevolucionAdmin />} />
           <Route path="pedidoadmin/:id" element={<PedidoAdmin />} />
           <Route path="clientaform" element={<ClientaForm />} />
+          <Route path='crearproducto' element={<CrearProducto />} />
           <Route path="menuclienta/:id" element={<MenuClientas />} />
           <Route path="crearpedido/:id" element={<CrearPedido />} />
           <Route path="verdevoluciones/:id" element={<VerDevoluciones />} />
@@ -32,6 +34,7 @@ function App() {
           <Route path="devoluciondetalles" element={<VerDetallesDevolucion />} />
           <Route path='pedidodetalles'element={<VerDetallesPedido />} />
           <Route path='anotarabono/:id' element={<AnotarAbono />} />
+
         </Routes>
       </main>
     </BrowserRouter>

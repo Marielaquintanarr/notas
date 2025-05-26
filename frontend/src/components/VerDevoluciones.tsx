@@ -105,7 +105,8 @@ export default function VerDevoluciones(){
                     borderRadius: "20px",
                     color: "white",
                     marginLeft: "3%",
-                    marginRight: "3%"
+                    marginRight: "3%",
+                    marginBottom: "1%"
                 }}>
                 <div style={{
                     display: "flex",
@@ -115,10 +116,10 @@ export default function VerDevoluciones(){
                     marginLeft: "20px",
 
                 }}>
-                    <p style={{fontWeight: "100"}}> Fecha | {devolucion.fecha.split("T")[0]}</p>
+                    <p style={{fontWeight: "100", fontSize: "1rem"}}> Fecha | {devolucion.fecha.split("T")[0]}</p>
                 </div>
-                <Link style={{listStyle: "none"}} to={`/devolucionadmin/${devolucion.id}`}>
-                        <button style={{marginRight: "10px", padding: "10%", borderRadius: "10px", display: "flex", backgroundColor: "#D6ED6A", color: "black", border: "none"}}>Ver devolución <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} /></button>
+                <Link style={{textDecoration: "none"}} to={`/devolucionadmin/${devolucion.id}`}>
+                        <button style={{marginRight: "10px", padding: "10%", borderRadius: "10px", display: "flex", backgroundColor: "#D6ED6A", color: "black", border: "none"}}>Ver devolución</button>
                 </Link>
             </div>
             ))}

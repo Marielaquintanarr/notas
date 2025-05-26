@@ -105,7 +105,8 @@ function VerPedidos(){
                     borderRadius: "20px",
                     color: "white",
                     marginLeft: "3%",
-                    marginRight: "3%"
+                    marginRight: "3%",
+                    marginBottom: "1%"
                 }}>
                 <div style={{
                     display: "flex",
@@ -118,7 +119,7 @@ function VerPedidos(){
                     <p style={{fontWeight: "100"}}> Fecha | {pedido.fecha.split("T")[0]}</p>
                 </div>
                 <Link style={{listStyle: "none"}} to={`/pedidoadmin/${pedido.id}`}>
-                        <button style={{marginRight: "10px", padding: "10%", borderRadius: "10px", display: "flex", backgroundColor: "#D6ED6A", color: "black", border: "none"}}>Ver pedidos <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} /></button>
+                        <button style={{marginRight: "10px", padding: "10%", borderRadius: "10px", display: "flex", backgroundColor: "#D6ED6A", color: "black", border: "none"}}>Ver pedidos</button>
                 </Link>
             </div>
             ))}

@@ -51,7 +51,7 @@ function MenuClientas() {
                     display: "flex",
                     flexDirection: "column"
                 }}>
-                <h2 style={{color: "white", fontSize: "40px", padding: "none", margin: "none"}}>{clienta.nombre} {clienta.apellido}</h2>
+                <h2 style={{color: "white", fontSize: "3rem", padding: "none", margin: "none"}}>{clienta.nombre} {clienta.apellido}</h2>
                 <div style={{
                     backgroundColor: "#2E2E2E",
                     height: "2px",
@@ -67,181 +67,152 @@ function MenuClientas() {
                 marginRight: "5%",
                 color: "white",
             }}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "#5D5D5D",
-                    border: "2px solid white",
-                    borderRadius: "20px",
-                    width: "100%",
-                    color: "white",
-                }}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "15px",
-                    padding: "10px"
-                }}>
+                <Link to={`/verpedidos/${clientaId}`}>
                     <div style={{
-                        backgroundColor: "white",
-                        borderRadius: "12px",
-                        width: "45px",
-                        height: "45px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "space-between",
+                        backgroundColor: "#5D5D5D",
+                        border: "2px solid white",
+                        borderRadius: "20px",
+                        width: "100%",
+                        color: "white",
                     }}>
-                        <img
-                            src={eye}
-                            alt="ojo"
-                            style={{ width: "22px", height: "22px"}}
-                        />
-                    </div>
-                    <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>Ver pedidos</p>
-                </div>
-
-                <Link to={`/verpedidos/${clientaId}`} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textDecoration: "none"
-                }}>
-                    <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} />
-                </Link>
-                </div>
-
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "#5D5D5D",
-                    border: "2px solid white",
-                    borderRadius: "20px",
-                    width: "100%",
-                    color: "white"
-                }}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "15px",
-                    padding: "10px"
-                }}>
                     <div style={{
-                        backgroundColor: "white",
-                        borderRadius: "12px",
-                        width: "45px",
-                        height: "45px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        gap: "15px",
+                        padding: "10px"
                     }}>
-                        <img
-                            src={edit}
-                            alt="edit"
-                            style={{ width: "22px", height: "22px"}}
-                        />
+                        <div style={{
+                            backgroundColor: "white",
+                            borderRadius: "12px",
+                            width: "45px",
+                            height: "45px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            <img
+                                src={eye}
+                                alt="ojo"
+                                style={{ width: "22px", height: "22px"}}
+                            />
+                        </div>
+                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "1rem" }}>Ver pedidos</p>
                     </div>
-                    <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>Hacer Pedido</p>
-                </div>
-
-                <Link to={`/crearpedido/${clientaId}`} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textDecoration: "none"
-                }}>
-                    <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} />
+                    </div>
                 </Link>
-                </div>
-
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "#5D5D5D",
-                    border: "2px solid white",
-                    borderRadius: "20px",
-                    width: "100%",
-                    color: "white"
-                }}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "15px",
-                    padding: "10px"
-                }}>
+                <Link to={`/crearpedido/${clientaId}`}>
                     <div style={{
-                        backgroundColor: "white",
-                        borderRadius: "12px",
-                        width: "45px",
-                        height: "45px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "space-between",
+                        backgroundColor: "#5D5D5D",
+                        border: "2px solid white",
+                        borderRadius: "20px",
+                        width: "100%",
+                        color: "white"
                     }}>
-                        <img
-                            src={eye}
-                            alt="ojo"
-                            style={{ width: "22px", height: "22px"}}
-                        />
+                        <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "15px",
+                            padding: "10px"
+                        }}>
+                            <div style={{
+                                backgroundColor: "white",
+                                borderRadius: "12px",
+                                width: "45px",
+                                height: "45px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                <img
+                                    src={edit}
+                                    alt="edit"
+                                    style={{ width: "22px", height: "22px"}}
+                                />
+                            </div>
+                            <p style={{ margin: 0, fontWeight: "bold", fontSize: "1rem" }}>Hacer Pedido</p>
+                        </div>
                     </div>
-                    <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>Ver devoluciones</p>
-                </div>
-
-                <Link to={`/verdevoluciones/${clientaId}`} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textDecoration: "none"
-                }}>
-                    <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} />
                 </Link>
-                </div>
 
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "#5D5D5D",
-                    border: "2px solid white",
-                    borderRadius: "20px",
-                    width: "100%",
-                    color: "white"
-                }}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "15px",
-                    padding: "10px"
-                }}>
+                <Link to={`/verdevoluciones/${clientaId}`}>
                     <div style={{
-                        backgroundColor: "white",
-                        borderRadius: "12px",
-                        width: "45px",
-                        height: "45px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "space-between",
+                        backgroundColor: "#5D5D5D",
+                        border: "2px solid white",
+                        borderRadius: "20px",
+                        width: "100%",
+                        color: "white"
                     }}>
-                        <img
-                            src={edit}
-                            alt="edit"
-                            style={{ width: "22px", height: "22px"}}
-                        />
+                        <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "15px",
+                            padding: "10px"
+                        }}>
+                            <div style={{
+                                backgroundColor: "white",
+                                borderRadius: "12px",
+                                width: "45px",
+                                height: "45px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                <img
+                                    src={eye}
+                                    alt="ojo"
+                                    style={{ width: "22px", height: "22px"}}
+                                />
+                            </div>
+                            <p style={{ margin: 0, fontWeight: "bold", fontSize: "1rem"}}>Ver devoluciones</p>
+                        </div>
                     </div>
-                    <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>Hacer Devolucion</p>
-                </div>
-
-                <Link to={`/creardevolucion/${clientaId}`} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textDecoration: "none"
-                }}>
-                    <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} />
                 </Link>
-                </div>
+
+                <Link to={`/creardevolucion/${clientaId}`}>
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        backgroundColor: "#5D5D5D",
+                        border: "2px solid white",
+                        borderRadius: "20px",
+                        width: "100%",
+                        color: "white"
+                    }}>
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "15px",
+                        padding: "10px"
+                    }}>
+                        <div style={{
+                            backgroundColor: "white",
+                            borderRadius: "12px",
+                            width: "45px",
+                            height: "45px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            <img
+                                src={edit}
+                                alt="edit"
+                                style={{ width: "22px", height: "22px"}}
+                            />
+                        </div>
+                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "1rem" }}>Hacer Devolucion</p>
+                    </div>
+                    </div>
+                </Link>
 
             </div>
 
