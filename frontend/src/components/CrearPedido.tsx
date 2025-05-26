@@ -127,8 +127,6 @@ export default function CrearPedido() {
       (acc, prod) => acc + prod.cantidad * prod.subtotal, 0
     );
 
-    const fechaSolo = pedido.fecha.split("T")[0];
-
     const pedidoConTotal = { ...pedido, total};
 
     try {
@@ -308,6 +306,7 @@ export default function CrearPedido() {
           }}
         />
       </div>
+      {error && <p>{error}</p>}
     </form>
   );
 }

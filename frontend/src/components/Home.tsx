@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/search-icon.webp";
 import arrow from "../assets/blackarrow.png";

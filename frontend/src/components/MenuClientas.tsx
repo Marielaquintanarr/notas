@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import eye from "../assets/Eye.png";
-import flecha from "../assets/flechawhite.png";
 import edit from "../assets/Edit.png";
 
 type Clienta = {
@@ -213,7 +212,8 @@ function MenuClientas() {
                     </div>
                     </div>
                 </Link>
-
+                {loading && <p>{loading}</p>}
+                {error && <p>{error}</p>}
             </div>
 
         </>
