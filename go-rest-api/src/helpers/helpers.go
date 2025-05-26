@@ -35,15 +35,14 @@ func DecodeBodyProducto(req *http.Request) (models.Producto, bool) {
 	return productos, true
 }
 
-func DecodeBodyDevolucion(req *http.Request) (models.Devolucion, bool) {
-	var devoluciones models.Devolucion
-	err := json.NewDecoder(req.Body).Decode(&devoluciones)
+func DecodeBodyDevolucion(r *http.Request) (models.Devolucion, bool) {
+	var devolucion models.Devolucion
+	err := json.NewDecoder(r.Body).Decode(&devolucion)
 	if err != nil {
 		return models.Devolucion{}, false
 	}
-	return devoluciones, true
+	return devolucion, true
 }
-
 func DecodeBodyAbono(req *http.Request) (models.Abono, bool) {
 	var abonos models.Abono
 	err := json.NewDecoder(req.Body).Decode(&abonos)

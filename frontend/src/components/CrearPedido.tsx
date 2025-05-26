@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-const clientaId = localStorage.getItem("clientaId");
+import { useParams } from "react-router-dom";
+
 
 type ProductoDetalle = {
   productoId: number;
@@ -14,6 +15,13 @@ interface Clienta {
   apellido: string;
 }
 
+type Producto = {
+  id: number;
+  nombre: string;
+  precio: number;
+};
+
+
 type Pedido = {
   fecha: string;
   clientaId: number;
@@ -22,6 +30,8 @@ type Pedido = {
 };
 
 export default function CrearPedido() {
+  const { id: clientaId } = useParams();
+  const [productos, setProductos] = useState<Producto[]>([]);
   const [clienta, setClienta] = useState<Clienta | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +60,23 @@ export default function CrearPedido() {
     notas: '',
     productos: [{ productoId: 0, cantidad: 0, subtotal: 0 }],
   });
+
+  useEffect(() => {
+          fetch(`http://localhost:8080/api/productos`)
+              .then((res) => res.json())
+              .then((data) => {
+                  if (!data.success) {
+                      setError("La API respondió con un error.");
+                      console.error("Error en la respuesta de la API:", data.errors);
+                      return;
+                  }
+                  setProductos(data.data); 
+              })
+              .catch((error) => {
+                  console.error("Error al obtener el producto:", error);
+                  setError("No se pudo obtener el producto.");
+              });
+      }, []);
 
   const [successMessage, setSuccessMessage] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
@@ -105,7 +132,7 @@ export default function CrearPedido() {
     const pedidoConTotal = { ...pedido, total};
 
     try {
-      const response = await fetch('http://localhost:8080/api/pedidos/crear', {
+      const response = await fetch('http://localhost:8080/api/devolucion/crear', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -158,8 +185,6 @@ export default function CrearPedido() {
     fontSize: "16px",
   };
 
-  
-
   return (
     <form style={{ color: "white" }} onSubmit={handleSubmit}>
       <div style={{ marginLeft: "3%", marginRight: "3%", marginBottom: "2%", marginTop: "3%" }}>
@@ -206,7 +231,7 @@ export default function CrearPedido() {
           <thead>
             <tr>
               <th style={thStyle}>Cantidad</th>
-              <th style={thStyle}>Producto ID</th>
+              <th style={thStyle}>Producto</th>
               <th style={thStyle}>Precio Unitario</th>
               <th style={thStyle}>Subtotal</th>
               <th style={thStyle}>Acción</th>
@@ -224,12 +249,24 @@ export default function CrearPedido() {
                   />
                 </td>
                 <td>
-                  <input
-                    type="number"
+                  <select
                     value={producto.productoId}
-                    onChange={(e) => handleProductoChange(index, 'productoId', e.target.value)}
-                    required
-                  />
+                      onChange={(e) => handleProductoChange(index, "productoId", e.target.value)}
+                      style={{
+                            padding: "10px",
+                            backgroundColor: "#222",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px"
+                      }}
+                      >
+                      <option value="">Selecciona un producto</option>
+                      {productos.map((p) => (
+                        <option value={p.id} key={p.id}>
+                          {p.nombre}
+                        </option>
+                    ))}
+                  </select>
                 </td>
                 <td>
                   <input

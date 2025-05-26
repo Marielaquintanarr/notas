@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 interface Abono {
   fecha: string;
@@ -14,11 +14,9 @@ interface APIResponse {
   errors: string[];
 }
 
-const id = localStorage.getItem("pedidoId");
-const pedidoId = parseInt(id ?? '0');
-
 const AnotarAbono: React.FC = () => {
-  const [form, setForm] = useState<Abono>({ fecha: '', monto: 0, comentarios: '', pedidoId: pedidoId });
+  const { id: pedidoId } = useParams();
+  const [form, setForm] = useState<Abono>({ fecha: '', monto: 0, comentarios: '', pedidoId: parseInt(pedidoId ?? '0') });
   const [mensaje, setMensaje] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,10 +37,12 @@ const AnotarAbono: React.FC = () => {
     });
 
     const data: APIResponse = await res.json();
+    const navigate = useNavigate();
 
     if (data.success) {
       setMensaje(`Abono creado`);
-      setForm({ fecha: '', monto: 0, comentarios: '', pedidoId });
+      navigate(`/pedidoadmin/${pedidoId}`);
+      setForm({ fecha: '', monto: 0, comentarios: '', pedidoId: parseInt(pedidoId ?? '0') });
     } else {
       setMensaje(`Errores: ${data.errors.join(', ')}`);
     }
@@ -79,6 +79,7 @@ const AnotarAbono: React.FC = () => {
               required
             />
               <button type="submit">Guardar Abono</button>
+
           </div>
         </div>
         <p>Comentarios: </p>

@@ -30,6 +30,11 @@ type PedidosData3 struct {
 	Errors  []string         `json:"errors"`
 }
 
+type DevolucionData2 struct {
+	Success bool                 `json:"success"`
+	Data    []models.Devolucion2 `json:"data"`
+	Errors  []string             `json:"errors"`
+}
 type PedidosData4 struct {
 	Success bool             `json:"success"`
 	Data    []models.Pedido4 `json:"data"`
@@ -344,7 +349,7 @@ func GetProducto(w http.ResponseWriter, req *http.Request) {
 func CreateDevolucion(w http.ResponseWriter, req *http.Request) {
 	bodyDevolucion, success := helpers.DecodeBodyDevolucion(req)
 	if !success {
-		http.Error(w, "No se pudo decodificar el cuerpo de la devolución", http.StatusBadRequest)
+		http.Error(w, "No se pudo decodificar el cuerpo de la devolucion", http.StatusBadRequest)
 		return
 	}
 
@@ -381,11 +386,10 @@ func CreateDevolucion(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(json)
 }
-
 func GetDevoluciones(w http.ResponseWriter, req *http.Request) {
 	var data DevolucionData
 
-	devoluciones, success := models.GetDevolucion()
+	devoluciones, success := models.GetDevoluciones()
 	if !success {
 		data.Success = false
 		data.Errors = append(data.Errors, "no se pudieron cargar las devoluciones")
@@ -600,6 +604,162 @@ func GetPedidosbyId(w http.ResponseWriter, req *http.Request) {
 
 	data.Success = true
 	data.Data = pedidos
+
+	json, _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(json)
+}
+
+func GetFechaDevolucionbyId(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	idStr := vars["id"]
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	var data DevolucionData2
+	pedidos, success := models.GetDevolucionesbyClientaId(id)
+	if !success {
+		data.Success = false
+		data.Errors = append(data.Errors, "no se pudieron cargar las fechas por id")
+
+		jsonData, _ := json.Marshal(data)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonData)
+		return
+	}
+
+	data.Success = true
+	data.Data = pedidos
+
+	jsonData, _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonData)
+}
+
+func GetDevolucionbyId(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	idStr := vars["id"]
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+	var data DevolucionData
+
+	devoluciones, success := models.GetDevolucionInfobyId(id)
+	if !success {
+		data.Success = false
+		data.Errors = append(data.Errors, "no se pudieron cargar las devoluciones")
+
+		json, _ := json.Marshal(data)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(json)
+		return
+	}
+
+	data.Success = true
+	data.Data = devoluciones
+
+	json, _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(json)
+}
+
+func UpdateDevoluciones(w http.ResponseWriter, r *http.Request) {
+	var devolucion models.Devolucion
+	err := json.NewDecoder(r.Body).Decode(&devolucion)
+	if err != nil {
+		http.Error(w, "Datos inválidos", http.StatusBadRequest)
+		return
+	}
+
+	devolucionActualizada, ok, err := models.UpdateDevolucion(devolucion)
+	if err != nil || !ok {
+		http.Error(w, "Error al actualizar devolucion", http.StatusInternalServerError)
+		return
+	}
+
+	response := struct {
+		Success bool              `json:"success"`
+		Data    models.Devolucion `json:"data"`
+	}{
+		Success: true,
+		Data:    devolucionActualizada,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func DeleteDevolucionById(w http.ResponseWriter, req *http.Request) {
+	var data DevolucionData
+	vars := mux.Vars(req)
+	idStr := vars["id"]
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	devoluciones, success := models.DeleteDevolucion(id)
+	if !success {
+		data.Success = false
+		data.Errors = append(data.Errors, "no se pudo eliminar la devolucion")
+
+		json, _ := json.Marshal(data)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(json)
+		return
+	}
+
+	data.Success = true
+	data.Data = devoluciones
+
+	json, _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(json)
+}
+
+func GetProductosById(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	idStr := vars["id"]
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	var data ProductoData
+	productos, success := models.GetProductobyId(id)
+
+	if success != true {
+		data.Success = false
+		data.Errors = append(data.Errors, "no se pudieron cargar los productos por Id")
+
+		json, _ := json.Marshal(data)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(json)
+		return
+	}
+
+	data.Success = true
+	data.Data = productos
 
 	json, _ := json.Marshal(data)
 	w.Header().Set("Content-Type", "application/json")

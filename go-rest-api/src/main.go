@@ -29,7 +29,12 @@ func main() {
 	apiRouter.HandleFunc("/fechabyid/{id}", api.GetFechaPedidobyId).Methods("GET", "OPTIONS")
 	apiRouter.HandleFunc("/getpedidoid/{id}", api.GetPedidosbyId).Methods("GET", "OPTIONS")
 	apiRouter.HandleFunc("/eliminarpedido/{id}", api.DeletePedidoById).Methods("DELETE", "OPTIONS")
+	apiRouter.HandleFunc("/eliminardevolucion/{id}", api.DeleteDevolucionById).Methods("DELETE", "OPTIONS")
 	apiRouter.HandleFunc("/actualizarpedido", api.UpdatePedidos).Methods("PUT", "OPTIONS")
+	apiRouter.HandleFunc("/actualizardevolucion", api.UpdateDevoluciones).Methods("PUT", "OPTIONS")
+	apiRouter.HandleFunc("/fechadevolucion/{id}", api.GetFechaDevolucionbyId).Methods("GET", "OPTIONS")
+	apiRouter.HandleFunc("/devolucionbyid/{id}", api.GetDevolucionbyId).Methods("GET", "OPTIONS")
+	apiRouter.HandleFunc("/productosbyid/{id}", api.GetProductosById).Methods("GET", "OPTIONS")
 
 	handlerWithCORS := api.EnableCORS(router)
 

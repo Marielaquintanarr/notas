@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {Link} from "react-router-dom";
-const clientaId = localStorage.getItem("clientaId");
-
+import { useParams, Link } from "react-router-dom";
+import flecha from "../assets/flecha.webp";
 type ProductoDetalle = {
     productoId: number;
     cantidad: number;
@@ -23,6 +22,7 @@ type Clienta = {
 }
   
 function VerPedidos(){
+    const { id: clientaId } = useParams();
     const [pedidos, setPedidos] = useState<Pedido[]>([]);
     const [clienta, setClienta] = useState<Clienta | null>(null);
     const [loading, setLoading] = useState(true);
@@ -92,35 +92,35 @@ function VerPedidos(){
                 <div style={{
                     marginTop: "1%"
                 }}>
-                    <label style={{
-                        color: "white"
-                    }}>Fecha: </label>
-                    <input 
-                        type="date"
-                    />
                 </div>
             </div>
-            
+
             {pedidos.map((pedido) => (
-                <div key={pedido.id}
-                    style={{
-                        backgroundColor: "#222222",
-                        borderColor: "#2E2E2E",
-                        color: "white",
-                        padding: "2%",
-                        margin: "3%",
-                        borderRadius: "15px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "20px"
-                    }}
-                >
-                    <p> Fecha | {pedido.fecha}</p>
-                   <button onClick={() => {localStorage.setItem("pedidoId", pedido.id.toString());
-                    }}>
-                        <Link to="/pedidoadmin">go</Link>
-                    </button>
+            <div key={pedido.id} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    backgroundColor: "#222222",
+                    border: "2px solid #2E2E2E",
+                    borderRadius: "20px",
+                    color: "white",
+                    marginLeft: "3%",
+                    marginRight: "3%"
+                }}>
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "15px",
+                    padding: "10px",
+                    marginLeft: "20px",
+
+                }}>
+                    <p style={{fontWeight: "100"}}> Fecha | {pedido.fecha.split("T")[0]}</p>
                 </div>
+                <Link style={{listStyle: "none"}} to={`/pedidoadmin/${pedido.id}`}>
+                        <button style={{marginRight: "10px", padding: "10%", borderRadius: "10px", display: "flex", backgroundColor: "#D6ED6A", color: "black", border: "none"}}>Ver pedidos <img src={flecha} alt="flecha" style={{ width: "20px", height: "20px" }} /></button>
+                </Link>
+            </div>
             ))}
 
         </>

@@ -1,12 +1,19 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
+
 
 type ProductoDetalle = {
   productoId: number;
   cantidad: number;
   subtotal: number;
 };
+
+interface Clienta {
+  nombre: string;
+  apellido: string;
+}
 
 type Devolucion = {
   fecha: string;
@@ -15,10 +22,40 @@ type Devolucion = {
   productos: ProductoDetalle[];
 };
 
+type Producto = {
+  id: number;
+  nombre: string;
+  precio: number;
+}
+
 export default function CrearDevolucion() {
+  const { id: clientaId } = useParams();
+  const [clienta, setClienta] = useState<Clienta | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [productos, setProductos] =  useState<Producto[]>([]);
+  useEffect(() => {
+          fetch(`http://localhost:8080/api/nombrebyid/${clientaId}`)
+              .then((res) => res.json())
+              .then((data) => {
+                  if (!data.success) {
+                      setError("La API respondió con un error.");
+                      console.error("Error en la respuesta de la API:", data.errors);
+                      setClienta(null);
+                      return;
+                  }
+      
+                  setClienta(data.data[0]);  
+              })
+              .catch((error) => {
+                  console.error("Error al obtener la clienta:", error);
+                  setError("No se pudo obtener la clienta.");
+              });
+      }, []);
+    
+
   const [devolucion, setDevolucion] = useState<Devolucion>({
     fecha: '',
-    clientaId: 0,
+    clientaId: parseInt(clientaId ?? '0'),
     notas: '',
     productos: [{ productoId: 0, cantidad: 0, subtotal: 0 }],
   });
@@ -69,10 +106,12 @@ export default function CrearDevolucion() {
     setErrors([]);
 
     const total = devolucion.productos.reduce(
-      (acc, prod) => acc + prod.cantidad * prod.precioUnitario, 0
+      (acc, prod) => acc + prod.cantidad * prod.subtotal, 0
     );
 
-    const devolucionConTotal = { ...devolucion, total };
+    const fechaSolo = devolucion.fecha.split("T")[0];
+
+    const devolucionConTotal = { ...devolucion, total, fechaSolo};
 
     try {
       const response = await fetch('http://localhost:8080/api/devolucion/crear', {
@@ -86,7 +125,7 @@ export default function CrearDevolucion() {
       const data = await response.json();
 
       if (data.success) {
-        setSuccessMessage('✅ Devolucion creado exitosamente');
+        setSuccessMessage('Devolucion creada exitosamente');
         setDevolucion({
           fecha: '',
           clientaId: 0,
@@ -94,10 +133,10 @@ export default function CrearDevolucion() {
           productos: [{ productoId: 0, cantidad: 0, subtotal: 0 }]
         });
       } else {
-        setErrors(data.errors || ['Ocurrió un error inesperado.']);
+        setErrors(data.errors || ['Ocurrió un error.']);
       }
     } catch (error) {
-      setErrors(['❌ Error de red o del servidor.']);
+      setErrors(['Error']);
     }
   };
 
@@ -127,11 +166,29 @@ export default function CrearDevolucion() {
     fontWeight: 500,
     fontSize: "16px",
   };
+  useEffect(() => {
+            fetch(`http://localhost:8080/api/productos`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (!data.success) {
+                        setError("La API respondió con un error.");
+                        console.error("Error en la respuesta de la API:", data.errors);
+                        return;
+                    }
+                    setProductos(data.data); 
+                })
+                .catch((error) => {
+                    console.error("Error al obtener el producto:", error);
+                    setError("No se pudo obtener el producto.");
+                });
+        }, []);
+
+  
 
   return (
     <form style={{ color: "white" }} onSubmit={handleSubmit}>
       <div style={{ marginLeft: "3%", marginRight: "3%", marginBottom: "2%", marginTop: "3%" }}>
-        <h2>Crear Devolución</h2>
+        <h2>Crear Devolucion</h2>
         <div style={{ backgroundColor: "#2E2E2E", width: "100%", height: "2px", marginTop: "10px" }}></div>
       </div>
 
@@ -143,34 +200,19 @@ export default function CrearDevolucion() {
       )}
 
       <div style={{ marginLeft: "3%", marginRight: "3%", color: "white", display: "flex", gap: "2%" }}>
+        {clienta && <p>{clienta.nombre} {clienta.apellido}</p>}
         <input
-          type="number"
-          name="clientaId"
-          placeholder="ID Clienta"
-          value={devolucion.clientaId}
-          onChange={handleChange}
-          style={{
-            backgroundColor: "#222222",
-            border: "#2E2E2E",
-            width: "60%",
-            height: "50px",
-            borderRadius: "10px",
-            color: "white"
-          }}
-        />
-        <input
-          type="date"
-          name="fecha"
-          value={devolucion.fecha}
-          onChange={handleChange}
-          style={{
-            backgroundColor: "#222222",
-            border: "#2E2E2E",
-            width: "35%",
-            height: "50px",
-            borderRadius: "10px",
-            color: "white"
-          }}
+            type="date"
+            name="fecha"
+            value={devolucion.fecha.split("T")[0]} 
+            onChange={handleChange}
+            style={{
+              width: "30%",
+              backgroundColor: "#222",
+              color: "white",
+              borderRadius: "10px",
+              padding: "10px",
+            }}
         />
         <button
           type="submit"
@@ -180,7 +222,7 @@ export default function CrearDevolucion() {
             borderRadius: "10px"
           }}
         >
-          Crear Pedido
+          Crear Devolucion
         </button>
       </div>
 
@@ -189,7 +231,7 @@ export default function CrearDevolucion() {
           <thead>
             <tr>
               <th style={thStyle}>Cantidad</th>
-              <th style={thStyle}>Producto ID</th>
+              <th style={thStyle}>Producto</th>
               <th style={thStyle}>Precio Unitario</th>
               <th style={thStyle}>Subtotal</th>
               <th style={thStyle}>Acción</th>
@@ -207,12 +249,24 @@ export default function CrearDevolucion() {
                   />
                 </td>
                 <td>
-                  <input
-                    type="number"
+                  <select
                     value={producto.productoId}
-                    onChange={(e) => handleProductoChange(index, 'productoId', e.target.value)}
-                    required
-                  />
+                      onChange={(e) => handleProductoChange(index, "productoId", e.target.value)}
+                      style={{
+                            padding: "10px",
+                            backgroundColor: "#222",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px"
+                      }}
+                      >
+                      <option value="">Selecciona un producto</option>
+                      {productos.map((p) => (
+                        <option value={p.id} key={p.id}>
+                          {p.nombre}
+                        </option>
+                    ))}
+                  </select>
                 </td>
                 <td>
                   <input

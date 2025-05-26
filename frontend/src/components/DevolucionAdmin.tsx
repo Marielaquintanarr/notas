@@ -1,274 +1,375 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import {Link, useParams} from "react-router-dom";
+import tache from "../assets/X.png";
 
 type ProductoDetalle = {
-  productoId: number;
-  cantidad: number;
-  subtotal: number;
+    productoId: number;
+    cantidad: number;
+    subtotal: number;
+};
+
+type Producto = {
+    id: number;
+    nombre: string;
+    precio: number;
 };
 
 type Devolucion = {
-  fecha: string;
-  clientaId: number;
-  notas: string;
-  productos: ProductoDetalle[];
+    id: number;
+    fecha: string;
+    clientaId: number;
+    notas: string;
+    productos: ProductoDetalle[];
 };
 
-export default function VerDetallesDevolucion() {
-  const [devolucion, setDevolucion] = useState<Devolucion>({
-    fecha: '',
-    clientaId: 0,
-    notas: '',
-    productos: [{ productoId: 0, cantidad: 0, subtotal: 0 }],
-  });
+export default function DevolucionAdmin() {
+    const { id: devolucionId } = useParams();
+    const [devolucion, setDevolucion] = useState<Devolucion | null>(null);
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState("");
 
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errors, setErrors] = useState<string[]>([]);
+    useEffect(() => {
+        const fetchDevolucion = async () => {
+        try {
+            const res = await fetch(`http://localhost:8080/api/devolucionbyid/${devolucionId}`);
+            const data = await res.json();
+            if (data.success && data.data.length > 0) {
+                setDevolucion(data.data[0]);
+            } else {
+            setError("Devolución no encontrada");
+            }
+        } catch (e) {
+            setError("Error al cargar la devolución");
+        }
+        };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setDevolucion(prev => ({
-      ...prev,
-      [name]: name === 'clientaId' ? parseInt(value) : value
-    }));
-  };
+        fetchDevolucion();
+    }, [devolucionId]);
 
-  const handleProductoChange = (
-    index: number,
-    field: keyof ProductoDetalle,
-    value: string | number
-  ) => {
-    const nuevosProductos = [...devolucion.productos];
-    nuevosProductos[index][field] =
-      field === 'productoId' || field === 'cantidad' || field === 'subtotal'
-        ? Number(value)
-        : value as never;
-    setDevolucion(prev => ({ ...prev, productos: nuevosProductos }));
-  };
 
-  const agregarProducto = () => {
-    setDevolucion(prev => ({
-      ...prev,
-      productos: [...prev.productos, { productoId: 0, cantidad: 0, subtotal: 0 }]
-    }));
-  };
-
-  const eliminarProducto = (index: number) => {
-    setDevolucion(prev => ({
-      ...prev,
-      productos: prev.productos.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSuccessMessage('');
-    setErrors([]);
-
-    const total = devolucion.productos.reduce(
-      (acc, prod) => acc + prod.cantidad * prod.precioUnitario, 0
-    );
-
-    const devolucionConTotal = { ...devolucion, total };
-
-    try {
-      const response = await fetch('http://localhost:8080/api/devolucion/crear', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(devolucionConTotal)
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setSuccessMessage('✅ Devolucion creado exitosamente');
-        setDevolucion({
-          fecha: '',
-          clientaId: 0,
-          notas: '',
-          productos: [{ productoId: 0, cantidad: 0, subtotal: 0 }]
+    const handleUpdateDevolucion = async () => {
+        if (!devolucion) return;
+    
+        const total = devolucion.productos.reduce(
+        (acc, prod) => acc + prod.cantidad * prod.subtotal,
+        0
+        );
+        const devolucionConTotal = { ...devolucion, total };
+    
+        try {
+        const res = await fetch("http://localhost:8080/api/actualizardevolucion", {
+            method: 'PUT',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(devolucionConTotal)
         });
-      } else {
-        setErrors(data.errors || ['Ocurrió un error inesperado.']);
-      }
-    } catch (error) {
-      setErrors(['❌ Error de red o del servidor.']);
-    }
-  };
+    
+        const data = await res.json();
+        if (data.success) {
+            setSuccessMessage("Devolucion actualizada exitosamente");
+        } else {
+            setError("Error al actualizar la devolucion");
+        }
+        } catch (e) {
+        setError("Error al actualizar la devolucion");
+        }
+    };
 
-  const tableContainerStyle = {
-    borderRadius: "20px",
-    color: "#fff",
-    marginLeft: "3%",
-    marginRight: "3%",
-    marginTop: "1%"
-  };
+    const handleEliminarDevolucion = async () => {
+        try {
+            const res = await fetch(`http://localhost:8080/api/eliminardevolucion/${devolucionId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            });
+            const data = await res.json();
+            if (data.success && data.data.length > 0) {
+            setDevolucion(data.data[0]);
+            } else {
+            setError("Devolucion no encontrada");
+            }
+            } catch (e) {
+            setError("Error al eliminar la devolucion");
+            }
+        };
+    
 
-  const tableStyle = {
-    borderCollapse: "collapse" as const,
-    width: "100%",
-    backgroundColor: "#222222",
-    borderColor: "#2E2E2E",
-    color: "#fff",
-    borderRadius: "10px",
-    overflow: "hidden" as const,
-  };
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+        if (devolucion) {
+        setDevolucion((prev) =>
+            prev
+            ? {
+                ...prev,
+                [name]: name === "clientaId" ? parseInt(value) : value,
+                }
+            : null
+        );
+        }
+    };
 
-  const thStyle = {
-    padding: "12px 16px",
-    textAlign: "left" as const,
-    border: "1px solid #333",
-    backgroundColor: "#121212",
-    fontWeight: 500,
-    fontSize: "16px",
-  };
+    const handleProductoChange = (
+        index: number,
+        field: keyof ProductoDetalle,
+        value: string | number
+    ) => {
+        if (!devolucion) return;
+        const nuevosProductos = [...devolucion.productos];
+        nuevosProductos[index][field] = Number(value);
+        setDevolucion((prev) => prev ? { ...prev, productos: nuevosProductos } : null);
+    };
 
-  return (
-    <form style={{ color: "white" }} onSubmit={handleSubmit}>
-      <div style={{ marginLeft: "3%", marginRight: "3%", marginBottom: "2%", marginTop: "3%" }}>
-        <h2>Editar Devolución</h2>
-        <div style={{ backgroundColor: "#2E2E2E", width: "100%", height: "2px", marginTop: "10px" }}></div>
-      </div>
+    const agregarProducto = () => {
+        if (!devolucion) return;
+        setDevolucion((prev) =>
+        prev
+            ? {
+                ...prev,
+                productos: [
+                ...prev.productos,
+                { productoId: 0, cantidad: 0, subtotal: 0 },
+                ],
+            }
+            : null
+        );
+    };
 
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      {errors.length > 0 && (
-        <ul style={{ color: 'red' }}>
-          {errors.map((err, index) => <li key={index}>{err}</li>)}
-        </ul>
-      )}
+    const eliminarProducto = (index: number) => {
+        if (!devolucion) return;
+        setDevolucion((prev) =>
+        prev
+            ? {
+                ...prev,
+                productos: prev.productos.filter((_, i) => i !== index),
+            }
+            : null
+        );
+    };
 
-      <div style={{ marginLeft: "3%", marginRight: "3%", color: "white", display: "flex", gap: "2%" }}>
-        <input
-          type="number"
-          name="clientaId"
-          placeholder="ID Clienta"
-          value={devolucion.clientaId}
-          onChange={handleChange}
-          style={{
-            backgroundColor: "#222222",
-            border: "#2E2E2E",
-            width: "60%",
-            height: "50px",
-            borderRadius: "10px",
-            color: "white"
-          }}
-        />
-        <input
-          type="date"
-          name="fecha"
-          value={devolucion.fecha}
-          onChange={handleChange}
-          style={{
-            backgroundColor: "#222222",
-            border: "#2E2E2E",
-            width: "35%",
-            height: "50px",
-            borderRadius: "10px",
-            color: "white"
-          }}
-        />
-        <button 
-         style={{
-            padding: "10px",
-            width: "10%",
-            borderRadius: "10px"
-          }}>
-            Anotar Abono
-        </button>
-        <button
-         style={{
-            padding: "10px",
-            width: "10%",
-            borderRadius: "10px"
-          }}>
-            Eliminar Pedido
-        </button>
-        <button
-          style={{
-            padding: "10px",
-            width: "10%",
-            borderRadius: "10px"
-          }}
-        >
-          Guardar Pedido
-        </button>
-      </div>
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!devolucion) return;
 
-      <div style={tableContainerStyle}>
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={thStyle}>Cantidad</th>
-              <th style={thStyle}>Producto ID</th>
-              <th style={thStyle}>Precio Unitario</th>
-              <th style={thStyle}>Subtotal</th>
-              <th style={thStyle}>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {devolucion.productos.map((producto, index) => (
-              <tr key={index}>
-                <td>
-                  <input
-                    type="number"
-                    value={producto.cantidad}
-                    onChange={(e) => handleProductoChange(index, 'cantidad', e.target.value)}
-                    required
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={producto.productoId}
-                    onChange={(e) => handleProductoChange(index, 'productoId', e.target.value)}
-                    required
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={producto.subtotal}
-                    step="0.01"
-                    onChange={(e) => handleProductoChange(index, 'subtotal', e.target.value)}
-                    required
-                  />
-                </td>
-                <td>
-                  {(producto.cantidad * producto.subtotal).toFixed(2)}
-                </td>
-                <td>
-                  <button type="button" onClick={() => eliminarProducto(index)}>🗑</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        const total = devolucion.productos.reduce(
+        (acc, prod) => acc + prod.cantidad * prod.subtotal,
+        0
+        );
 
-        <div style={{ marginTop: "1rem" }}>
-          <button type="button" onClick={agregarProducto}>➕ Agregar Producto</button>
+        const pedidoConTotal = { ...devolucion, total };
+        try {
+        const response = await fetch(
+            `http://localhost:8080/api/devolucionbyid/${devolucionId}`,
+            {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(pedidoConTotal),
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+            setSuccessMessage("Pedido actualizado exitosamente");
+        } else {
+            setError("Error al actualizar el pedido");
+        }
+        } catch (error) {
+        setError("Error.");
+        }
+    };
+
+    useEffect(() => {
+        fetch(`http://localhost:8080/api/productos`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (!data.success) {
+                    setError("La API respondió con un error.");
+                    console.error("Error en la respuesta de la API:", data.errors);
+                    return;
+                }
+                setProductos(data.data); 
+            })
+            .catch((error) => {
+                console.error("Error al obtener el producto:", error);
+                setError("No se pudo obtener el producto.");
+            });
+    }, []);
+    
+    
+
+    if (error) return <p style={{ color: "red" }}>{error}</p>;
+    if (!devolucion) return <p style={{ color: "white" }}>Cargando pedido...</p>;
+
+    return (
+        <form style={{ color: "white" }} onSubmit={handleSubmit}>
+            <div style={{
+                margin: "3%",
+            }}>
+               
+                <div>
+                    <h1 style={{color: "white"}}>Información de Devolución {devolucionId}</h1>
+                </div>
+                <div style={{
+                    backgroundColor: "#2E2E2E",
+                    height: "2px",
+                }}></div>
+                <div style={{
+                    marginTop: "1%"
+                }}>
+                </div>
+            </div>
+
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+
+        <div style={{ display: "flex", gap: "2%", margin: "3%"}}>
+            <input
+            type="number"
+            name="clientaId"
+            value={devolucion.clientaId}
+            onChange={handleChange}
+            style={{
+                width: "30%",
+                backgroundColor: "#222",
+                color: "white",
+                borderRadius: "10px",
+                padding: "10px",
+                border: "2px solid #2E2E2E"
+            }}
+            />
+            <input
+                type="date"
+                name="fecha"
+                value={devolucion.fecha.split("T")[0]} 
+                onChange={handleChange}
+                style={{
+                    width: "30%",
+                    border: "2px solid #2E2E2E",
+                    backgroundColor: "#222",
+                    color: "white",
+                    borderRadius: "10px",
+                    padding: "10px",
+                }}
+            />
+            <Link to={`/verdevoluciones/${devolucion.clientaId}`}>
+                <button
+                    onClick={handleUpdateDevolucion}
+                    type="submit"
+                    style={{ width: "75%", padding: "10px", borderRadius: "10px", backgroundColor: "#D6ED6A", border: "none" }}
+                >
+                Guardar Cambios
+                </button>
+            </Link>
+            <Link to={`/verdevoluciones/${devolucion.clientaId}`}>
+                <button onClick={handleEliminarDevolucion} style={{ width: "75%", padding: "10px", borderRadius: "10px", backgroundColor: "#FF0000", border: "none" }}>Eliminar pedido</button>
+            </Link>
         </div>
-      </div>
 
-      <div style={{ marginLeft: "3%", marginRight: "3%", marginTop: "2%" }}>
-        <p style={{ color: "white" }}>Comentarios:</p>
-        <textarea
-          name="notas"
-          value={devolucion.notas}
-          onChange={handleChange}
-          style={{
-            width: "100%",
-            backgroundColor: "#222222",
-            borderColor: "#2E2E2E",
-            color: "white",
-            borderRadius: "10px"
-          }}
-        />
-      </div>
-    </form>
-  );
+        <div style={{ margin: "3%" }}>
+            <table style={{ width: "100%", color: "white", backgroundColor: "#222", border: "2px solid #2E2E2E", padding: "15px", borderRadius: "10px"}}>
+            <thead>
+                <tr>
+                <th>Cantidad</th>
+                <th>Producto ID</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {devolucion.productos.map((producto, index) => (
+                <tr key={index}>
+                    <td style={{display: "flex", justifyContent: "center", alignItems: "center", marginTop: "2%", flexDirection: "column"}}>
+                    <input
+                        style={{padding: "10px", backgroundColor: "#222", border: "none", textAlign: "center",display: "flex", justifyContent: "center", alignItems: "center", color: "white"}}
+                        type="number"
+                        value={producto.cantidad}
+                        onChange={(e) =>
+                        handleProductoChange(index, "cantidad", e.target.value)
+                        }
+                    />
+                    </td>
+                    <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                    <select
+                        value={producto.productoId}
+                        onChange={(e) => handleProductoChange(index, "productoId", e.target.value)}
+                        style={{
+                            padding: "10px",
+                            backgroundColor: "#222",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px"
+                        }}
+                        >
+                        {productos.map((p) => (
+                            <option value={p.id} key={p.id}>
+                            {p.nombre}
+                            </option>
+                        ))}
+                    </select>
+                    </td>
+                    <td style={{textAlign: "center", verticalAlign: "middle"}}>
+                    <input
+                        type="number"
+                        style={{
+                            padding: "10px",
+                            backgroundColor: "#222",
+                            border: "none",
+                            textAlign: "center",
+                            color: "white",
+                            borderRadius: "5px"
+                          }}
+                        value={producto.subtotal}
+                        step="1.00"
+                        onChange={(e) =>
+                        handleProductoChange(index, "subtotal", e.target.value)
+                        }
+                    />
+                    </td>
+                    <td style={{textAlign: "center", verticalAlign: "middle"}}>{(producto.cantidad * producto.subtotal).toFixed(2)}</td>
+                    <td style={{textAlign: "center", verticalAlign: "middle"}}>
+                    <button style={{backgroundColor: "red", border: "none", borderRadius: "5px", alignContent: "center"}} type="button" onClick={() => eliminarProducto(index)}>
+                        <img src={tache} alt="tache" style={{width: "50%" }}></img>
+                    </button>
+                    </td>
+                </tr>
+                ))}
+            </tbody>
+            </table>
+
+            <button
+            type="button"
+            onClick={agregarProducto}
+            style={{ marginTop: "1rem", padding: "0.5%", borderRadius: "10px", backgroundColor: "white"}}
+            >
+            ➕ Agregar Producto
+            </button>
+        </div>
+
+        <div style={{ margin: "3%" }}>
+            <label>Notas:</label>
+            <textarea
+            name="notas"
+            value={devolucion.notas}
+            onChange={handleChange}
+            style={{
+                width: "100%",
+                marginTop: "1%",
+                backgroundColor: "#222",
+                color: "white",
+                borderRadius: "10px",
+                border: "2px solid #2E2E2E"
+            }}
+            />
+        </div>
+        </form>
+    );
 }

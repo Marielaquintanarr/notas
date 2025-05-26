@@ -41,35 +41,3 @@ func InsertarAbono(fecha string, monto float64, comentarios string, pedidoId int
 	}
 	return Abono{abono_id, fecha, monto, comentarios, pedidoId}, true
 }
-
-// obtener todos los abonos
-// func GetAbono() ([]Abono, bool) {
-// 	db := database.GetConnection()
-
-// 	rows, err := db.Query("SELECT * FROM ABONOs")
-
-// 	if err != nil {
-// 		return []Abono{}, false
-// 	}
-
-// 	var abonos []Abono
-// 	var id int
-// 	var fecha string
-// 	var clientaId int
-// 	var productoId int
-// 	var abono float64
-// 	var total float64
-// 	var pedidoId int
-// 	var devolucionId int
-// 	var notas string
-
-// 	for rows.Next() {
-// 		rows.Scan(&id, &fecha, &clientaId, &productoId, &abono, &total, &pedidoId, &devolucionId, &notas)
-// 		abonos = append(abonos, Abono{id, fecha, clientaId, productoId, abono, total, pedidoId, devolucionId, notas})
-// 	}
-
-// 	return abonos, true
-
-// }
-
-// abonos por id clientas

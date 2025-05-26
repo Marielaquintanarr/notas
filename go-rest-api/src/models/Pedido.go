@@ -477,8 +477,6 @@ func GetPedidoInfobyId(id int) ([]Pedido, bool) {
 		if err != nil {
 			return nil, false
 		}
-
-		// 2. Obtener los detalles del pedido
 		detalleRows, err := db.Query(`
 			SELECT productoId, cantidad, subtotal
 			FROM PEDIDO_DETALLE
