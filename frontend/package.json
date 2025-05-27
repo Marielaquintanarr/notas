@@ -10,7 +10,7 @@
   "homepage": "https://marielaquintanarr.github.io/notas",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist -r https://github.com/Marielaquintanarr/notas.git",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
