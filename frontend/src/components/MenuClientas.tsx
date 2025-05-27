@@ -66,7 +66,7 @@ function MenuClientas() {
                 marginRight: "5%",
                 color: "white",
             }}>
-                <Link to={`/verpedidos/${clientaId}`}>
+                <Link style={{textDecoration: "none"}} to={`/verpedidos/${clientaId}`}>
                     <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -102,7 +102,7 @@ function MenuClientas() {
                     </div>
                     </div>
                 </Link>
-                <Link to={`/crearpedido/${clientaId}`}>
+                <Link style={{textDecoration: "none"}} to={`/crearpedido/${clientaId}`}>
                     <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -139,7 +139,7 @@ function MenuClientas() {
                     </div>
                 </Link>
 
-                <Link to={`/verdevoluciones/${clientaId}`}>
+                <Link style={{textDecoration: "none"}} to={`/verdevoluciones/${clientaId}`}>
                     <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -176,7 +176,7 @@ function MenuClientas() {
                     </div>
                 </Link>
 
-                <Link to={`/creardevolucion/${clientaId}`}>
+                <Link style={{textDecoration: "none"}} to={`/creardevolucion/${clientaId}`}>
                     <div style={{
                         display: "flex",
                         alignItems: "center",
