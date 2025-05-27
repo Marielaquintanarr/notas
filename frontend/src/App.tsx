@@ -18,7 +18,7 @@ import CrearProducto from './components/CrearProducto'
 function App() {
   return (
     <>
-      <BrowserRouter> 
+      <BrowserRouter basename="/notas"> 
       <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
