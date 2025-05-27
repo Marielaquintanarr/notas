@@ -69,12 +69,13 @@ func EnableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
 
-		// Permitir solo los orígenes específicos que necesitas
-		if origin == "http://localhost:5173" || origin == "https://marielaquintanarr.github.io" {
+		// Siempre devolver el origen que hace la solicitud (si no es vacío)
+		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE, GET, PUT, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		}
+		w.Header().Set("Vary", "Origin") // importante para cache en proxies/CDNs
+		w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE, GET, PUT, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
@@ -85,7 +86,6 @@ func EnableCORS(next http.Handler) http.Handler {
 	})
 }
 
-// clientas
 func CreateClienta(w http.ResponseWriter, req *http.Request) {
 	bodyClienta, success := helpers.DecodeBody(req)
 	if success != true {

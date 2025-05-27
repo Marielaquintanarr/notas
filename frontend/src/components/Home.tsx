@@ -21,7 +21,7 @@ function ClientasList() {
 
 
     useEffect(() => {
-        fetch("https://notas-06q6.onrender.com/api/clientas")
+        fetch("https://notas-2-5o1r.onrender.com/api/clientas")
             .then((res) => res.json())
             .then((data) => {
                 if (!data.success) {
